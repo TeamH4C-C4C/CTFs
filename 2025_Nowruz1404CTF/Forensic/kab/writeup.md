@@ -1,6 +1,6 @@
 문제에서는 pcap파일을 주는데 http object를 extract 하면 아래와 같은 파일들이 나온다.
 
-![Screenshot of extracted files](Screenshot%202025-03-22%20at%209.47.43%20PM.png)
+<img width="728" alt="Screenshot 2025-03-22 at 9 47 43 PM" src="https://github.com/user-attachments/assets/8b8a56b8-e444-40c8-940d-2b3b333b4de6" />
 
 이는 스테가노 그라피 인코딩 방법과 키, 플래그가 숨겨진 사진을 제공해준다.
 
