@@ -240,7 +240,7 @@ _dl_call_fini (void *closure_map)
 				      break;
 ```
 
-1. `flavor` 값이 `ef_cxa`인 경우 `flavor`를 `ef_free`로 수정한다.
+2. `flavor` 값이 `ef_cxa`인 경우 `flavor`를 `ef_free`로 수정한다.
     
     ⇒ `ef_free`는 함수를 호출하지 않는 case에 해당하므로, 다음 `__run_exit_handlers()` 호출 시 아무런 동작을 하지 않고 switch문이 종료된다.
     
