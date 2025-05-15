@@ -1,0 +1,75 @@
+# analysis
+
+define 매크로를 사용goTrh, 일반적인 문장 형태로 주어짐. 
+gcc -E 옵션을 사용해서 expanded 버전을 분석하면 flag checker 함수를 확인할 수 있음
+
+## flag check logic
+```c
+int flag_checker(const char *user_input)
+{
+     const unsigned char predefine_set[] = {0x32, 0xc0, 0xbf, 0x6c, 0x61, 0x85, 0x5c, 0xe4, 0x40, 0xd0, 0x8f, 0xa2, 0xef, 0x7c, 0x4a, 0x2, 0x4, 0x9f, 0x37, 0x18, 0x68, 0x97, 0x39, 0x33, 0xbe, 0xf1, 0x20, 0xf1, 0x40, 0x83, 0x6, 0x7e, 0xf1, 0x46, 0xa6, 0x47, 0xfe, 0xc3, 0xc8, 0x67, 0x4, 0x4d, 0xba, 0x10, 0x9b, 0x33};
+     int user_inptu_len = strlen(user_input);
+     if (user_inptu_len != sizeof(predefine_set))
+     {
+          return 0;
+     }
+     for (int mpnvtqeqmsgc = 0; mpnvtqeqmsgc < user_inptu_len; mpnvtqeqmsgc++)
+     {
+          unsigned char z = jistcuazjdma(user_input[mpnvtqeqmsgc], mpnvtqeqmsgc);
+          unsigned char e = b((z & 0xF0) | ((~z) & 0x0F),
+                              mpnvtqeqmsgc % 8);
+          if (e != predefine_set[mpnvtqeqmsgc])
+          {
+               return 0;
+          }
+     }
+     return 1;
+}
+```
+
+# solve 
+검증 로직이 그대로 보이기 때문에, 파이썬을 이용해서 역연산 코드를 작성해주면 된다. 
+
+```py
+def rol(val, r):
+    return ((val << r) & 0xFF) | (val >> (8 - r))
+
+def ror(val, r):
+    return ((val >> r) & 0xFF) | ((val << (8 - r)) & 0xFF)
+
+pre = [
+    0x32, 0xC0, 0xBF, 0x6C, 0x61, 0x85, 0x5C, 0xE4, 0x40, 0xD0, 0x8F, 0xA2,
+    0xEF, 0x7C, 0x4A, 0x02, 0x04, 0x9F, 0x37, 0x18, 0x68, 0x97, 0x39, 0x33,
+    0xBE, 0xF1, 0x20, 0xF1, 0x40, 0x83, 0x06, 0x7E, 0xF1, 0x46, 0xA6, 0x47,
+    0xFE, 0xC3, 0xC8, 0x67, 0x04, 0x4D, 0xBA, 0x10, 0x9B, 0x33
+]
+
+flag = []
+for i, e in enumerate(pre):
+    R = i % 8
+    M = rol(e, R) & 0xFF
+
+    high = M & 0xF0
+    low = (~M) & 0x0F
+    z = high | low
+
+    # invert addition of 42
+    y = (z - 42) & 0xFF
+
+    S = (i + 3) % 7
+    c_xor = ror(y, S)
+
+    # invert XOR with (i * 37)
+    c = c_xor ^ ((i * 37) & 0xFF)
+
+    flag.append(c)
+
+flag_bytes = bytes(flag)
+print("Recovered flag:", flag_bytes)
+print("As ASCII:", flag_bytes.decode('ascii'))
+```
+
+# flag
+```
+ bctf{seizing_the_m3m3s_0f_pr0ducti0n_32187ea8}
+```
